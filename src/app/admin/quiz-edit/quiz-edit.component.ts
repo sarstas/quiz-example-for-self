@@ -55,6 +55,7 @@ export class QuizEditComponent implements OnInit {
     this.loading = true;
     fn.subscribe(
       () => {
+        debugger
         this._router.navigate(['/master']);
       },
       (err: Error) => {

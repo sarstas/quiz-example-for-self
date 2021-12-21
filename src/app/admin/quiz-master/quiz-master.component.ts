@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs';
 import { IQuestion, QuestionService } from "@app/admin/providers/question.service";
 import { ConfirmService } from "@app/admin/providers/confirm.service";
 
+
 @Component({
   selector: 'app-quiz-master',
   templateUrl: './quiz-master.component.html',
@@ -33,10 +34,10 @@ export class QuizMasterComponent implements OnInit, OnDestroy {
   public load() {
     this.loading = true;
     this.questions = [];
-    this._loadSub = this._questionService.getAll().pipe(
+    this._loadSub = this._questionService.getQuestion().pipe(
       finalize(() => this.loading = false)
     ).subscribe(
-      (questions: IQuestion[]) => this.questions = questions
+      (questions) => this.questions = questions.data
     );
   }
 
@@ -44,6 +45,7 @@ export class QuizMasterComponent implements OnInit, OnDestroy {
     this._confirmService.show().then(
       () => {
         this.loading = true;
+
         this._questionService.remove(questionId).pipe(
           finalize(() => this.loading = false)
         ).subscribe(

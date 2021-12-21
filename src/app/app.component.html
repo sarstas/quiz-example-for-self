@@ -1,9 +1,13 @@
 <nav class="navbar navbar-expand navbar-dark bg-dark" >
   <div class="navbar-nav">
-    <a class="nav-item nav-link" routerLink="/" >Home</a>
-    <a class="nav-item nav-link" routerLink="admin" >Admin</a>
-    <a
-      class="nav-item nav-link"
+    <span routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+      <a class="nav-item nav-link" routerLink="/quiz" >Home</a>
+    </span>
+    <span routerLinkActive="active">
+      <a class="nav-item nav-link" routerLink="/admin">Admin</a>
+    </span>
+
+    <a class="nav-item nav-link btn"
       *ngIf="currentUser"
       (click)="logout()"
     >

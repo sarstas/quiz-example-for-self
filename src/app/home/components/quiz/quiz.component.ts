@@ -61,30 +61,36 @@ export class QuizComponent implements OnInit {
       id: questionId,
       answerIds: selectedAnswersIds
     });
-    this._nextCardQuiz();
-    this._sendDataToServer();
+    if(this._currentQuestionIdx + 1 < this.questions.length) {
+      this._nextCardQuiz();
+    } else {
+      this._sendDataToServer();
+    }
   }
 
   private _nextCardQuiz() {
     this.form.reset();
     this._currentQuestionIdx++;
+    this._addCheckboxes();
+    this.loading = false;
   }
 
   private _sendDataToServer() {
-    if (this._currentQuestionIdx === this.questions.length) {
-      this.questionService.sendAnswers(this.toServer).subscribe((res) => {
-        this._incorrect = res.length
-        this.loading = false;
-      });
-    } else {
+    this.questionService.sendAnswers(this.toServer).subscribe((res) => {
+      this._incorrect = res.length
       this.loading = false;
-    }
+      this._currentQuestionIdx++;
+    });
   }
 
   private _addCheckboxes() {
-    this.questions[0].answers.forEach(() =>
+    while (this.answersFormArray.at(0)) {
+      this.answersFormArray.removeAt(0);
+    }
+
+    this.getCurrentQuestion.answers.forEach(()=> {
       this.answersFormArray.push(new FormControl(false))
-    );
+    })
   }
 
   private _getQuizAll(): void {
@@ -92,6 +98,7 @@ export class QuizComponent implements OnInit {
     this.questionService.getQuestions().subscribe((questions) => {
 
       this.questions = questions;
+
       this._addCheckboxes();
       this._currentQuestionIdx = 0;
       this.loading = false;
@@ -99,7 +106,11 @@ export class QuizComponent implements OnInit {
   }
 
   retry(): void {
+    while (this.answersFormArray.at(0)) {
+      this.answersFormArray.removeAt(0);
+    }
     this._currentQuestionIdx = 0;
+    this._addCheckboxes();
     this.toServer = { questions: [] };
   }
 }

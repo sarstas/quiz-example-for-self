@@ -41,6 +41,24 @@ export class RestService {
     );
   }
 
+  public restDELETE(endpoint: string, paramsData: IListItem[] = []): Observable<any> {
+    let body = {};
+
+    paramsData.map((param: IListItem) => {
+      if (param) {
+        body[param.heading] = param.value;
+      }
+    });
+
+    return this._http.request('delete',  endpoint, {
+      body,
+    }).pipe(
+      map((data: IResponse) => this._toResponse(data))
+    );
+  }
+
+
+
   private _toResponse(response: IResponse) {
     if (response.status === ResponseStatus.Success) {
       return response.data;

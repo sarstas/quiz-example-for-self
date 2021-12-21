@@ -3,7 +3,7 @@
 </header>
 
 <mat-card class="card">
-  <ng-container *ngIf="!loading && getCurrentQuestion; else finishBlock">
+  <ng-container *ngIf="!loading && getCurrentQuestion ; else finishBlock">
     <mat-card-title> Question: {{ getCurrentQuestion.question }}</mat-card-title>
     <form
       class="check__list"
