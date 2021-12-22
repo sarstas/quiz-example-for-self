@@ -12,7 +12,7 @@ import { Question } from "@app/home/entietis/question";
 })
 export class QuestionService {
   get api() {
-    return 'api/questions/';
+    return 'questions/';
   }
 
   constructor(
@@ -21,28 +21,22 @@ export class QuestionService {
   ) {
   }
 
-  getAll(): Observable<Question[]> {
-    return this._http.get(this.api).pipe(
-      tap(console.info),
-      map((response: IResponse<Question[]>) => response.data)
-    );
-  }
-  getQuestion(): Observable<any> {
-    return this._rest.restGET(`${environment.apiUrl}questions`)
+  get(): Observable<any> {
+    return this._rest.restGET(`${environment.apiUrl}${this.api}`)
   }
 
-  find(id: number): Observable<IQuestion> {
-    return this._http.get(`${environment.apiUrl}questions/${id}`).pipe(
-      map((response: IResponse<IQuestion>) => response.data)
+  find(id: number): Observable<Question> {
+    return this._rest.restGET(`${environment.apiUrl}${this.api}${id}`).pipe(
+      map((response) => response)
     );
   }
 
   remove(id: number): Observable<void> {
-    return this._rest.restDELETE(`${environment.apiUrl}questions/${id}`);
+    return this._rest.restDELETE(`${environment.apiUrl}${this.api}${id}`);
   }
 
   create(body: any): Observable<void> {
-    return this._http.post<void>(this.api, body);
+    return this._rest.restPOST(`${environment.apiUrl}${this.api}`, body)
   }
 
   edit(id: number, body): Observable<void> {

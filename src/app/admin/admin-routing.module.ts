@@ -11,11 +11,6 @@ const routes: Routes = [
     component: AdminLayoutComponent,
     children: [
       {
-        path: "",
-        redirectTo: "/admin/master",
-        pathMatch: "full"
-      },
-      {
         path: "master",
         component: QuizMasterComponent
       },
@@ -26,7 +21,12 @@ const routes: Routes = [
       {
         path: "create",
         component: QuizEditComponent
-      }
+      },
+      {
+        path: "",
+        redirectTo: "/admin/master",
+        pathMatch: "full"
+      },
     ]
   }
 ];

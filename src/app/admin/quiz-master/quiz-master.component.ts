@@ -34,7 +34,7 @@ export class QuizMasterComponent implements OnInit, OnDestroy {
   public load() {
     this.loading = true;
     this.questions = [];
-    this._loadSub = this._questionService.getQuestion().pipe(
+    this._loadSub = this._questionService.get().pipe(
       finalize(() => this.loading = false)
     ).subscribe(
       (questions) => this.questions = questions.data

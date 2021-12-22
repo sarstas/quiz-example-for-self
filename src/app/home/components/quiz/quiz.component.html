@@ -11,38 +11,41 @@
       (ngSubmit)="handleSubmitForm(getCurrentQuestion.id)"
     >
       <label formArrayName="answers" *ngFor="let answer of answersFormArray.controls; let i = index">
-        <input type="checkbox" [formControlName]="i">
-        {{ getCurrentQuestion.answers[i].value }}
+        <mat-checkbox class="example-margin" [formControlName]="i" >{{ getCurrentQuestion.answers[i].value }}</mat-checkbox>
       </label>
-
-      <button
-        type="submit"
-        class="btn__submit"
-        mat-button
-        color="accent"
-        [disabled]="!form.valid"
-      >
-        Next
-      </button>
+      <div>
+        <button
+          type="button"
+          class="btn__submit"
+          mat-button
+          color="accent"
+          (click)="back()"
+          [disabled]="this._currentQuestionIdx === 0 "
+        >Back</button>
+        <button
+          type="submit"
+          class="btn__submit"
+          mat-button
+          color="accent"
+          [disabled]="!form.valid"
+        >
+          Next
+        </button>
+      </div>
     </form>
   </ng-container>
 
   <ng-template #finishBlock>
-    <div class="check__finish" *ngIf="!loading">
-      <mat-card-title>
-        you answered {{ getIncorrectAnswers }} of {{ questions.length }} correctly
-      </mat-card-title>
-      <button
-        type="submit"
-        class="btn__submit"
-        mat-button
-        color="accent"
-        (click)="retry()"
-      >
-        To retry
-      </button>
-    </div>
+    <app-finish-block
+      [loading] = loading
+      [getIncorrectAnswers] = getIncorrectAnswers
+      [questionsLength] = questions.length
+      (toRetry)="retry()"
+    ></app-finish-block>
+
   </ng-template>
+
+
 
   <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
 </mat-card>

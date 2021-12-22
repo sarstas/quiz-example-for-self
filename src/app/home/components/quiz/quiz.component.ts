@@ -5,6 +5,7 @@ import { Question } from '@app/home/entietis/question';
 import { AnswersQuiz } from '@app/home/entietis/answers-quiz';
 import { QuestionService } from '@app/home/providers/question.service';
 import { MyValidators } from '../../../shared/validators/my.validators'
+import { AnswerQuestion } from "@app/home/entietis/answer-question";
 
 @Component({
   selector: 'app-home',
@@ -93,12 +94,25 @@ export class QuizComponent implements OnInit {
     })
   }
 
+  private _previousCheckboxes(previousQuestion: AnswerQuestion) {
+    while (this.answersFormArray.at(0)) {
+      this.answersFormArray.removeAt(0);
+    }
+
+    this.getCurrentQuestion.answers.forEach((item)=> {
+      if(previousQuestion.answerIds.find( (id) => id === item.id )) {
+        this.answersFormArray.push(new FormControl(true))
+      } else {
+        this.answersFormArray.push(new FormControl(false))
+      }
+
+    })
+  }
+
   private _getQuizAll(): void {
     this.loading = true;
     this.questionService.getQuestions().subscribe((questions) => {
-
       this.questions = questions;
-
       this._addCheckboxes();
       this._currentQuestionIdx = 0;
       this.loading = false;
@@ -112,6 +126,20 @@ export class QuizComponent implements OnInit {
     this._currentQuestionIdx = 0;
     this._addCheckboxes();
     this.toServer = { questions: [] };
+  }
+
+  back() {
+    if (this._currentQuestionIdx !== 0 ) {
+      this.form.reset();
+      this._currentQuestionIdx--;
+      // this._addCheckboxes();
+
+      const previousQuestion: AnswerQuestion = this.toServer.questions.find((item) =>  item.id === this.getCurrentQuestion.id )
+
+      this._previousCheckboxes(previousQuestion);
+      this.loading = false;
+    }
+
   }
 }
 

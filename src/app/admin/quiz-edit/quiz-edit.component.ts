@@ -1,33 +1,40 @@
-import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { HttpErrorResponse } from "@angular/common/http";
+import { Component, OnInit } from "@angular/core";
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
+import { ActivatedRoute, Router } from "@angular/router";
 import { IQuestion, QuestionService } from "@app/admin/providers/question.service";
+import { Question } from "@app/home/entietis/question";
+
+
 
 @Component({
-  selector: 'app-quiz-edit',
-  templateUrl: './quiz-edit.component.html',
-  styleUrls: ['./quiz-edit.component.scss']
+  selector: "app-quiz-edit",
+  templateUrl: "./quiz-edit.component.html",
+  styleUrls: ["./quiz-edit.component.scss"]
 })
 export class QuizEditComponent implements OnInit {
+
   public form: FormGroup;
-
   public loading = false;
-
   private readonly _id: number;
+
+  get answers(): FormArray {
+    return this.form.get("answers") as FormArray;
+  }
 
   constructor(
     private _questionService: QuestionService,
     private _router: Router,
-    route: ActivatedRoute,
+    private _fb: FormBuilder,
+    route: ActivatedRoute
   ) {
-    this._id = +route.snapshot.paramMap.get('id');
+    this._id = +route.snapshot.paramMap.get("id");
   }
 
   ngOnInit(): void {
-    this.form = new FormGroup({
-      question: new FormControl('', Validators.required),
-      answer: new FormControl('', Validators.required),
+    this.form = this._fb.group({
+      question: ["", Validators.required],
+      answers: this._fb.array([])
     });
 
     this.init();
@@ -35,12 +42,21 @@ export class QuizEditComponent implements OnInit {
 
   public init() {
     if (!this._id) {
+      this.addAnswer();
       return;
     }
 
     this._questionService.find(this._id).subscribe(
-      (question: IQuestion) => this.form.patchValue(question)
-    );
+      (question: Question) => {
+        const prepared = {
+          question: question.question,
+          answers: question.answers.map((answer) => {
+            this.addAnswer(answer.value, answer.correct);
+          })
+        }
+        this.form.patchValue(prepared)
+      }
+    )
   }
 
   save() {
@@ -48,15 +64,19 @@ export class QuizEditComponent implements OnInit {
       return;
     }
 
+    const body = this.form.value;
+
     const fn = !this._id
-      ? this._questionService.create(this.form.value)
+      ? this._questionService.create(body)
       : this._questionService.edit(this._id, this.form.value);
 
     this.loading = true;
+
+
+
     fn.subscribe(
       () => {
-        debugger
-        this._router.navigate(['/master']);
+        this._router.navigate(['/admin/master']);
       },
       (err: Error) => {
         this._validate(err);
@@ -64,6 +84,16 @@ export class QuizEditComponent implements OnInit {
       }
     );
   }
+
+  public addAnswer(answer = '', correct= false) {
+    this.answers.push(
+      this._fb.group({
+        value: [answer],
+        correct: [correct]
+      })
+    );
+  }
+
 
   // todo should be part of common rest service
   private _validate(err) {
@@ -78,9 +108,13 @@ export class QuizEditComponent implements OnInit {
             continue;
           }
 
-          control.setErrors({server: formError[key]});
+          control.setErrors({ server: formError[key] });
         }
       }
     }
+  }
+
+  public removeAnswer(i: number) {
+    this.answers.removeAt(i)
   }
 }

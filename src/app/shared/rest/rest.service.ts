@@ -61,6 +61,7 @@ export class RestService {
 
   private _toResponse(response: IResponse) {
     if (response.status === ResponseStatus.Success) {
+      // console.log('data obj', response.data);
       return response.data;
     }
 

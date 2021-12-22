@@ -1,16 +1,18 @@
+<a class="btn btn-outline-primary mb-4" routerLink="/admin/create" >
+  Crete new question +
+</a>
 <table class="table">
   <thead>
-
     <th>#</th>
     <th>Question</th>
-    <th>Actions</th>
+    <th class="action">Actions</th>
 
   </thead>
   <tbody>
   <tr *ngFor="let question of questions">
     <td>{{question.id}}</td>
     <td>{{question.question}}</td>
-    <td>
+    <td class="action">
       <a class="btn btn-outline-primary" [routerLink]="['/admin/edit', question.id]">
         <i class="fas fa-pen"></i>
         <span class="d-none d-md-inline-block">Edit</span>
@@ -23,7 +25,9 @@
         (click)="remove(question.id)"
       >
         <i class="fas fa-trash-alt"></i>
-        <span class="d-none d-md-inline-block">Delete</span>
+        <span class="d-none d-md-inline-block">
+          Delete
+        </span>
       </button>
     </td>
   </tr>

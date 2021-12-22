@@ -1,0 +1,14 @@
+<div class="check__finish" *ngIf="!loading">
+  <mat-card-title>
+    you answered {{ getIncorrectAnswers }} of {{ questionsLength }} correctly
+  </mat-card-title>
+  <button
+    type="submit"
+    class="btn__submit"
+    mat-button
+    color="accent"
+    (click)="retry()"
+  >
+    To retry
+  </button>
+</div>
